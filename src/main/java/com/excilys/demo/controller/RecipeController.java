@@ -2,22 +2,14 @@ package com.excilys.demo.controller;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.excilys.demo.dto.RecipeDto;
-import com.excilys.demo.dto.RecipeIngredientDto;
-import com.excilys.demo.exceptions.ElementNotFoundException;
+import com.excilys.demo.model.Recipe;
 import com.excilys.demo.service.RecipeService;
 
 @RestController
@@ -30,58 +22,33 @@ public class RecipeController {
     this.recipeService = recipeService;
   }
 
-  @CrossOrigin
-  @GetMapping
-  public List<RecipeDto> getAll() {
+  @GetMapping("get-all")
+  public List<Recipe> getAll() {
     return recipeService.getAll();
   }
 
-  @CrossOrigin
-  @GetMapping(value = "/{id}")
-  public ResponseEntity<RecipeDto> getById(@PathVariable("id") final Long id) {
-    Optional<RecipeDto> recipeDto = recipeService.getById(id);
-
-    if (recipeDto.isPresent()) {
-      return ResponseEntity.ok(recipeDto.get());
-    }
-
-    throw new ElementNotFoundException();
+  @DeleteMapping("delete")
+  public void delete(@RequestBody Recipe recipe) {
+    recipeService.delete(recipe);
   }
 
-  @CrossOrigin
-  @PostMapping
-  public ResponseEntity create(@RequestBody RecipeDto recipe) {
-    Optional<Long> recipeId = recipeService.create(recipe);
-
-    if (recipeId.isPresent()) {
-      return ResponseEntity.status(HttpStatus.CREATED).body(recipeId.get());
-    }
-
-    return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+  @DeleteMapping("delete-all")
+  public void deleteAll() {
+    recipeService.deleteAll();
   }
 
-  @CrossOrigin
-  @PatchMapping(value = "/ingredients")
-  public void addIngredients(@RequestParam("id") final Long id,
-      @RequestBody List<RecipeIngredientDto> ingredients) {
-    recipeService.addIngredients(id, ingredients);
-  }
-
-  @CrossOrigin
-  @PutMapping
-  public void update(@RequestBody RecipeDto recipe) {
-    recipeService.update(recipe);
-  }
-
-  @CrossOrigin
-  @DeleteMapping
-  public void delete(@RequestBody RecipeDto recipeDto) {
-    recipeService.delete(recipeDto);
-  }
-
-  @CrossOrigin
-  @DeleteMapping(value = "/{id}")
-  public void deleteById(@PathVariable("id") final Long id) {
+  @DeleteMapping("delete-by-id/{id}")
+  public void deleteById(@PathVariable Long id) {
     recipeService.deleteById(id);
+  }
+
+  @GetMapping("get-by-id")
+  public Optional<Recipe> findById(Long id) {
+    return recipeService.findById(id);
+  }
+
+  @PutMapping("save")
+  public Recipe save(@RequestBody Recipe recipe) {
+    return recipeService.save(recipe);
   }
 }

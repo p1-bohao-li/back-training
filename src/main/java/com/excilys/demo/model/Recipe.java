@@ -1,34 +1,24 @@
 package com.excilys.demo.model;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "recipe")
 public class Recipe {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
   private String picture;
   private String description;
-  private Set<RecipeIngredient> ingredients = new HashSet<>();
-  private Set<String> instructions = new HashSet<>();
+  private String instructions;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "recipe_id")
   public Long getId() {
     return id;
   }
@@ -37,7 +27,6 @@ public class Recipe {
     this.id = id;
   }
 
-  @Column(name = "name")
   public String getName() {
     return name;
   }
@@ -46,7 +35,6 @@ public class Recipe {
     this.name = name;
   }
 
-  @Column(name = "picture")
   public String getPicture() {
     return picture;
   }
@@ -55,7 +43,6 @@ public class Recipe {
     this.picture = picture;
   }
 
-  @Column(name = "description")
   public String getDescription() {
     return description;
   }
@@ -64,49 +51,39 @@ public class Recipe {
     this.description = description;
   }
 
-  @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-  public Set<RecipeIngredient> getIngredients() {
-    return ingredients;
-  }
-
-  public void setIngredients(Set<RecipeIngredient> ingredients) {
-    this.ingredients = ingredients;
-  }
-
-  @ElementCollection(fetch = FetchType.EAGER)
-  @Column(name = "instructions")
-  public Set<String> getInstructions() {
+  public String getInstructions() {
     return instructions;
   }
 
-  public void setInstructions(Set<String> instructions) {
+  public void setInstructions(String instructions) {
     this.instructions = instructions;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Recipe recipe = (Recipe) o;
-    return Objects.equals(id, recipe.id) &&
-        Objects.equals(name, recipe.name) &&
-        Objects.equals(picture, recipe.picture) &&
-        Objects.equals(description, recipe.description) &&
-        Objects.equals(ingredients, recipe.ingredients) &&
-        Objects.equals(instructions, recipe.instructions);
+  public int hashCode() {
+    return Objects.hash(description, id, instructions, name, picture);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(id, name, picture, description, ingredients, instructions);
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Recipe other = (Recipe) obj;
+    return Objects.equals(description, other.description) && Objects.equals(id, other.id)
+        && Objects.equals(instructions, other.instructions) && Objects.equals(name, other.name)
+        && Objects.equals(picture, other.picture);
   }
 
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    return "Recipe [id=" + id + ", name=" + name + ", picture=" + picture + ", description="
+        + description + ", instructions=" + instructions + "]";
   }
 }
